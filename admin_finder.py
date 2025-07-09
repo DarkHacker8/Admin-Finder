@@ -9,14 +9,14 @@ import re
 import socket
 from urllib.parse import urlparse
 
-# Настройка логирования
+# Configuring logging
 logging.basicConfig(
     filename="scan_results.log",
     level=logging.INFO,
     format="%(asctime)s - %(message)s",
 )
 
-# Конфигурация через аргументы командной строки
+# Configuration via command line arguments
 parser = argparse.ArgumentParser(description="Advanced Web Scanner")
 parser.add_argument("--url", help="Target URL (e.g., https://example.com)", required=True)
 parser.add_argument("--timeout", type=int, default=5, help="Request timeout in seconds")
@@ -25,7 +25,7 @@ parser.add_argument("--wordlist", type=str, help="Path to password wordlist file
 parser.add_argument("--subdomains", type=str, help="Path to subdomains wordlist file")
 args = parser.parse_args()
 
-# Загрузка паролей из файла или использование стандартного списка
+# Downloading passwords from a file or using a standard list
 if args.wordlist:
     try:
         with open(args.wordlist, 'r') as f:
@@ -36,7 +36,7 @@ if args.wordlist:
 else:
     PASSWORD_LIST = ["admin", "password", "123456", "admin123", "qwerty123"]
 
-# Загрузка списка поддоменов
+# Uploading a list of subdomains
 SUBDOMAIN_LIST = []
 if args.subdomains:
     try:
@@ -45,13 +45,13 @@ if args.subdomains:
     except FileNotFoundError:
         print(f"{Fore.RED}[!] Subdomains file not found, skipping subdomain scan{Style.RESET_ALL}")
 
-# Улучшенные пути к админ-панелям
+# Paths to admin panels
 ADMIN_PATHS = [
     "admin", "admin/login", "wp-admin", "administrator", 
     "backend", "controlpanel", "manager", "login/admin"
 ]
 
-# Улучшенные payloads для SQLi/XSS
+# Payloads for SQLi/XSS
 SQLI_PAYLOADS = [
     "' OR 1=1 --", 
     "admin'--", 
@@ -74,7 +74,7 @@ CMS_FINGERPRINTS = {
     "OpenCart": ["catalog/view/theme", "system/storage", "index.php?route="]
 }
 
-# Ограничение параллельных запросов
+# Limiting parallel requests
 SEMAPHORE = asyncio.Semaphore(10)
 
 async def detect_cms(session, url):
